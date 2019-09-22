@@ -8,10 +8,6 @@
     <script type="text/javascript" charset="utf8" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
     <!-- DataTables -->
     <script type="text/javascript" charset="utf8" src="http://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <style>
         .theTable{
             width: 50%;
@@ -21,6 +17,9 @@
         .zonglan{
             margin-left: 25%;
             margin-top: 2%;
+        }
+        .tableBody{
+            text-align: center;
         }
     </style>
 </head>
@@ -41,44 +40,32 @@
         <th>前天搜索量</th>
     </tr>
     </thead>
-    <tbody id="tbody-result">
-
+    <tbody id="tbody-result" class="tableBody">
     </tbody>
 </table>
 </div>
 
 <script>
     $(document).ready( function () {
-        $('#myTable').DataTable();
-    } );
-</script>
-
-
-
-</body>
-
-
- <script>
-    $(function () {
-        //表格初始化
-        var tbody = window.document.getElementById("tbody-result");
+        //渲染表格
+        var t=$('#myTable').DataTable();
         $.ajax({
             url:'count/getUserInfo',
             type:'get',
             success:function (result) {
                 var json = result;
-                var str = "";
                 for (i in json) {
-                    str += "<tr>" +
-                        "<td align='center'>" + json[i].username + "</td>" +
-                        "<td align='center'>" + json[i].today+ "</td>" +
-                        "<td align='center'>" + json[i].yesterday + "</td>" +
-                        "<td align='center'>" + json[i].dayBeforeYesterday+ "</td>" +
-                        "</tr>";
+                    t.row.add([
+                        json[i].username,
+                        json[i].today,
+                        json[i].yesterday,
+                        json[i].dayBeforeYesterday
+                    ]).draw(false);
+
                 }
-                tbody.innerHTML = str;
+
             }
-        })
+        });
 
 
         //获取用户总量
@@ -89,9 +76,7 @@
             success:function (result) {
                 userSum.innerHTML = "<b>用户总数："+result+"</b>";
             }
-        })
-
-
+        });
         //获取最近三天搜索总量
         var today=window.document.getElementById("today");
         var yesterday = window.document.getElementById("yesterday");
@@ -121,11 +106,8 @@
                 dayBeforeYestoday.innerHTML="前日搜索量："+result;
             }
         });
-
-    });
-
-
-
+    } );
 </script>
+</body>
 </html>
 </div>
